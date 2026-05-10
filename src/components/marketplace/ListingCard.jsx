@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MapPin, Star } from 'lucide-react';
 import './ListingCard.css';
 
-function ListingCard({ listing }) {
+const ListingCard = React.memo(function ListingCard({ listing }) {
   const [isSaved, setIsSaved] = useState(false);
   const navigate = useNavigate();
   
@@ -29,9 +29,15 @@ function ListingCard({ listing }) {
   return (
     <div className="listing-card glass-panel" onClick={() => navigate(`/product/${id}`)}>
       <div className="listing-image-container">
-        <img src={images && images.length > 0 ? images[0] : ''} alt={title} className="listing-image" />
+        <img 
+          src={images && images.length > 0 ? images[0] : ''} 
+          alt={title} 
+          className="listing-image"
+          loading="lazy"
+          decoding="async" 
+        />
         <div className="listing-badges">
-          <span className={`badge-type ${type}`}>{type.toUpperCase()}</span>
+          <span className={`badge-type ${type}`}>{type === 'sell' ? 'BUY' : type.toUpperCase()}</span>
           <button className="btn-wishlist" onClick={toggleSave}>
             <Heart size={18} fill={isSaved ? "currentColor" : "none"} color={isSaved ? "#ef4444" : "currentColor"} />
           </button>
@@ -59,7 +65,7 @@ function ListingCard({ listing }) {
         </div>
         
         <div className="seller-info">
-          <img src={seller.avatar} alt={seller.name} className="seller-avatar" />
+          <img src={seller.avatar} alt={seller.name} className="seller-avatar" loading="lazy" />
           <div className="seller-details">
             <span className="seller-name">{seller.name}</span>
             <div className="seller-rating">
@@ -76,6 +82,6 @@ function ListingCard({ listing }) {
       </div>
     </div>
   );
-}
+});
 
 export default ListingCard;

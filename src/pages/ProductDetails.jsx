@@ -1,17 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Sparkles, MapPin, ShieldCheck, Clock, Tag, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Sparkles, MapPin, ShieldCheck, Clock, Tag, Star, ChevronLeft, ChevronRight, X, ShoppingCart, CreditCard, CheckCircle } from 'lucide-react';
 import { getPricePrediction, formatProductAge } from '../utils/aiPrediction';
 import { MOCK_LISTINGS } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [product, setProduct] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [rentalDays, setRentalDays] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Checkout State
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [checkoutStep, setCheckoutStep] = useState(1); // 1: summary, 2: payment, 3: success
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [upiMethod, setUpiMethod] = useState('');
 
   useEffect(() => {
     // Simulate API fetch by finding the item in the array
@@ -23,6 +31,26 @@ function ProductDetails() {
       setPrediction(pred);
     }
   }, [id]);
+
+  const handlePayment = () => {
+    // Generate Invoice
+    const invoiceId = 'INV-' + Math.floor(100000 + Math.random() * 900000);
+    const newPurchase = {
+      id: invoiceId,
+      date: new Date().toLocaleDateString(),
+      productTitle: product.title,
+      price: product.price,
+      image: product.images[0],
+      paymentMethod: paymentMethod === 'upi' ? `UPI (${upiMethod})` : paymentMethod === 'cod' ? 'Cash on Delivery' : 'Netbanking',
+      sellerName: product.seller.name
+    };
+
+    // Save to localStorage
+    const existing = JSON.parse(localStorage.getItem('purchases') || '[]');
+    localStorage.setItem('purchases', JSON.stringify([newPurchase, ...existing]));
+
+    setCheckoutStep(3);
+  };
 
   if (!product) return <div className="container" style={{ paddingTop: '20px' }}>Loading...</div>;
 
@@ -77,7 +105,7 @@ function ProductDetails() {
 
         <div style={{ position: 'absolute', bottom: '16px', left: '16px', zIndex: 10 }}>
           <span className={`badge-type ${product.type}`} style={{ padding: '6px 12px', fontSize: '0.8rem' }}>
-            {product.type.toUpperCase()}
+            {product.type === 'sell' ? 'BUY' : product.type.toUpperCase()}
           </span>
         </div>
       </div>
@@ -273,17 +301,140 @@ function ProductDetails() {
           <div style={{ display: 'flex', gap: '12px' }}>
             <button 
               className="btn btn-outline" 
-              style={{ flex: 1, borderColor: 'var(--primary)', color: 'var(--primary)' }}
-              onClick={() => navigate(`/chat/negotiate_${product.id}`)}
+              style={{ flex: 1, borderColor: 'var(--primary)', color: 'var(--primary)', gap: '8px' }}
+              onClick={() => alert("Added to cart!")}
             >
-              Negotiate Price
+              <ShoppingCart size={18} /> Add to Cart
             </button>
-            <button className="btn btn-primary" style={{ flex: 1 }}>
+            <button 
+              className="btn btn-primary" 
+              style={{ flex: 1 }}
+              onClick={() => setShowCheckout(true)}
+            >
               Buy Now
             </button>
           </div>
         )}
       </div>
+
+      {/* Checkout Modal */}
+      <AnimatePresence>
+        {showCheckout && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+            onClick={() => setShowCheckout(false)}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              style={{ width: '100%', maxWidth: '600px', backgroundColor: 'var(--bg-dark)', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '24px', maxHeight: '90vh', overflowY: 'auto' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {checkoutStep === 1 && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                    <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Order Summary</h2>
+                    <button onClick={() => setShowCheckout(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}><X size={24} /></button>
+                  </div>
+
+                  <div className="glass-panel" style={{ padding: '16px', marginBottom: '16px' }}>
+                    <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-muted)' }}>Deliver to</h4>
+                    <p style={{ margin: '0 0 4px 0', fontWeight: 'bold' }}>{currentUser?.displayName || 'Student Name'}</p>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Room 402, Hostel B, Engineering Campus</p>
+                  </div>
+
+                  <div className="glass-panel" style={{ padding: '16px', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                      <img src={product.images[0]} alt={product.title} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
+                      <div>
+                        <div style={{ fontWeight: 'bold' }}>{product.title}</div>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Qty: 1</div>
+                      </div>
+                    </div>
+                    
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>MRP</span>
+                        <span style={{ textDecoration: 'line-through' }}>₹{product.originalPrice || product.price + 500}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Discount</span>
+                        <span style={{ color: 'var(--accent)' }}>-₹{(product.originalPrice || product.price + 500) - product.price}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(255,255,255,0.1)', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                        <span>Total Price</span>
+                        <span>₹{product.price}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button className="btn btn-primary" style={{ width: '100%', padding: '16px' }} onClick={() => setCheckoutStep(2)}>
+                    Proceed to Payment
+                  </button>
+                </div>
+              )}
+
+              {checkoutStep === 2 && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <button onClick={() => setCheckoutStep(1)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', display: 'flex' }}><ArrowLeft size={20} /></button>
+                      <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Payment Options</h2>
+                    </div>
+                    <button onClick={() => setShowCheckout(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}><X size={24} /></button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+                    <div className={`glass-panel ${paymentMethod === 'upi' ? 'active-payment' : ''}`} style={{ padding: '16px', border: paymentMethod === 'upi' ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.05)', cursor: 'pointer' }} onClick={() => setPaymentMethod('upi')}>
+                      <div style={{ fontWeight: 'bold', marginBottom: paymentMethod === 'upi' ? '12px' : '0' }}>UPI</div>
+                      {paymentMethod === 'upi' && (
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                          {['GPay', 'PhonePe', 'Paytm'].map(upi => (
+                            <button key={upi} className={`btn ${upiMethod === upi ? 'btn-primary' : 'btn-outline'}`} style={{ flex: 1, padding: '8px', fontSize: '0.8rem' }} onClick={(e) => { e.stopPropagation(); setUpiMethod(upi); }}>
+                              {upi}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="glass-panel" style={{ padding: '16px', border: paymentMethod === 'netbanking' ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.05)', cursor: 'pointer' }} onClick={() => setPaymentMethod('netbanking')}>
+                      <div style={{ fontWeight: 'bold' }}>Netbanking</div>
+                    </div>
+                    <div className="glass-panel" style={{ padding: '16px', border: paymentMethod === 'cod' ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.05)', cursor: 'pointer' }} onClick={() => setPaymentMethod('cod')}>
+                      <div style={{ fontWeight: 'bold' }}>Cash on Delivery</div>
+                    </div>
+                  </div>
+
+                  <button 
+                    className="btn btn-primary" 
+                    style={{ width: '100%', padding: '16px', opacity: (paymentMethod === 'upi' && !upiMethod) || !paymentMethod ? 0.5 : 1 }} 
+                    disabled={(paymentMethod === 'upi' && !upiMethod) || !paymentMethod}
+                    onClick={handlePayment}
+                  >
+                    Pay ₹{product.price}
+                  </button>
+                </div>
+              )}
+
+              {checkoutStep === 3 && (
+                <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+                  <CheckCircle size={64} color="var(--accent)" style={{ margin: '0 auto 24px auto' }} />
+                  <h2 style={{ marginBottom: '8px' }}>Order Confirmed!</h2>
+                  <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>Your invoice has been saved to your profile.</p>
+                  <button className="btn btn-primary" style={{ width: '100%', padding: '16px' }} onClick={() => { setShowCheckout(false); navigate('/profile'); }}>
+                    View Invoice in Profile
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </motion.div>
   );
