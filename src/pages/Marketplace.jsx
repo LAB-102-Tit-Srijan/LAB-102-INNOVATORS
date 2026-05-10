@@ -124,7 +124,7 @@ function Marketplace() {
       
       return matchesSearch && matchesCategory && matchesCondition && matchesType && matchesPrice;
     });
-  }, [searchQuery, activeCategory, filterCondition, filterType, filterPrice]);
+  }, [searchQuery, activeCategory, filterCondition, filterType, filterPrice, allListings]);
 
   return (
     <div className="container" style={{ paddingTop: '20px', paddingBottom: '100px' }}>
