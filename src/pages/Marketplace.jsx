@@ -56,10 +56,17 @@ function Marketplace() {
   // Loading State
   const [isLoading, setIsLoading] = useState(true);
 
+  // Global Listings Data
+  const [allListings, setAllListings] = useState([]);
+
   // Sync URL search to local state if it changes
   useEffect(() => {
     const q = searchParams.get('q');
     if (q !== null) setSearchQuery(q);
+    
+    // Load local storage listings
+    const userListings = JSON.parse(localStorage.getItem('userListings') || '[]');
+    setAllListings([...userListings, ...MOCK_LISTINGS]);
   }, [searchParams]);
 
   // Simulate network loading for filters
@@ -73,7 +80,7 @@ function Marketplace() {
   const recommendedItems = React.useMemo(() => {
     if (!studentBranch && !studentYear) return [];
     
-    let recs = [...MOCK_LISTINGS];
+    let recs = [...allListings];
     
     // 1st Year Focus
     if (studentYear === '1st Year') {
@@ -90,11 +97,11 @@ function Marketplace() {
     }
     
     return recs.slice(0, 4); // Top 4
-  }, [studentBranch, studentYear]);
+  }, [studentBranch, studentYear, allListings]);
 
   // Standard Filtering Logic - Memoized
   const filteredListings = React.useMemo(() => {
-    return MOCK_LISTINGS.filter(item => {
+    return allListings.filter(item => {
       // 1. Search
       const matchesSearch = searchQuery === '' || 
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 

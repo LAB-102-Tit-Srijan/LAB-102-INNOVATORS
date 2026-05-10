@@ -21,10 +21,12 @@ function Profile() {
   const { currentUser, logout } = useAuth();
   const [purchases, setPurchases] = useState([]);
   const [rentals, setRentals] = useState([]);
+  const [userListings, setUserListings] = useState([]);
 
   useEffect(() => {
     setPurchases(JSON.parse(localStorage.getItem('purchases') || '[]'));
     setRentals(JSON.parse(localStorage.getItem('rentals') || '[]'));
+    setUserListings(JSON.parse(localStorage.getItem('userListings') || '[]'));
   }, []);
 
   return (
@@ -77,7 +79,7 @@ function Profile() {
         gap: '20px',
         marginBottom: '32px'
       }}>
-        {MOCK_MY_LISTINGS.map(listing => (
+        {[...userListings, ...MOCK_MY_LISTINGS].map(listing => (
           <ListingCard key={listing.id} listing={listing} />
         ))}
       </div>

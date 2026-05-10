@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Info } from 'lucide-react';
 import { getPricePrediction } from '../utils/aiPrediction';
+import { useAuth } from '../context/AuthContext';
 
 const CATEGORIES = [
   { id: 'first_year', label: '🎓 1st Year Essentials' },
@@ -16,6 +17,7 @@ const CATEGORIES = [
 
 function AddListing() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   
   const [formData, setFormData] = useState({
     title: '',
@@ -51,7 +53,29 @@ function AddListing() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real app, this would post to Firebase
+    
+    const newListing = {
+      ...formData,
+      id: 'USER-' + Date.now(),
+      price: parseFloat(formData.price) || 0,
+      originalPrice: parseFloat(formData.originalPrice),
+      ageInMonths: parseInt(formData.ageInMonths) || 0,
+      images: ['https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600'], // Default image
+      location: 'Campus',
+      seller: { 
+        id: currentUser?.uid || 'user_custom', 
+        name: currentUser?.displayName || 'Student', 
+        avatar: `https://ui-avatars.com/api/?name=${currentUser?.displayName || 'S'}&background=6366F1&color=fff`, 
+        rating: 5.0, 
+        verified: true, 
+        trustScore: 100 
+      },
+      reviews: []
+    };
+
+    const existingListings = JSON.parse(localStorage.getItem('userListings') || '[]');
+    localStorage.setItem('userListings', JSON.stringify([newListing, ...existingListings]));
+
     alert("Listing posted successfully!");
     navigate('/market');
   };

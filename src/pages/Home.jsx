@@ -74,7 +74,7 @@ function Home() {
     <div style={{ paddingBottom: '100px', overflowX: 'hidden' }}>
       
       {/* 1. HERO SECTION */}
-      <div style={{ 
+      <div className="container" style={{ 
         minHeight: '85vh', 
         display: 'flex', 
         flexDirection: 'column',
@@ -82,9 +82,6 @@ function Home() {
         justifyContent: 'center',
         position: 'relative',
         paddingTop: '20px',
-        backgroundImage: "linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.95)), url('/hero-bg.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
       }}>
         
         {/* Background glow effects */}
