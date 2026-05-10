@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Info } from 'lucide-react';
+import { Sparkles, Info, Upload, Image as ImageIcon } from 'lucide-react';
 import { getPricePrediction } from '../utils/aiPrediction';
 import { useAuth } from '../context/AuthContext';
 
@@ -31,6 +31,18 @@ function AddListing() {
   });
 
   const [aiData, setAiData] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     // Run prediction if we have originalPrice
@@ -60,7 +72,7 @@ function AddListing() {
       price: parseFloat(formData.price) || 0,
       originalPrice: parseFloat(formData.originalPrice),
       ageInMonths: parseInt(formData.ageInMonths) || 0,
-      images: ['https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600'], // Default image
+      images: [imagePreview || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600'], // Default image fallback
       location: 'Campus',
       seller: { 
         id: currentUser?.uid || 'user_custom', 
@@ -168,6 +180,44 @@ function AddListing() {
                   style={{ border: '1px solid var(--primary)' }}
                   required={formData.type !== 'exchange'}
                 />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label className="input-field" style={{ border: 'none', padding: 0, marginBottom: '8px', display: 'block' }}>Product Image</label>
+              <div style={{ 
+                border: '2px dashed rgba(255,255,255,0.2)', 
+                borderRadius: '12px', 
+                padding: '24px', 
+                textAlign: 'center',
+                position: 'relative',
+                cursor: 'pointer',
+                backgroundColor: 'rgba(255,255,255,0.02)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '150px',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
+              onMouseOut={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'}
+              >
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleImageUpload} 
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
+                />
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'contain' }} />
+                ) : (
+                  <>
+                    <Upload size={32} color="var(--text-muted)" style={{ marginBottom: '12px' }} />
+                    <div style={{ color: 'white', fontWeight: 500, marginBottom: '4px' }}>Click to upload an image</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>PNG, JPG, up to 5MB</div>
+                  </>
+                )}
               </div>
             </div>
 
