@@ -173,13 +173,9 @@ function Home() {
                     {isRented ? 'Out of Stock' : 'Rent Now'}
                   </button>
                 </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px', flex: 1 }}>{bike.desc}</p>
-                <button className="btn btn-primary" style={{ width: '100%', padding: '12px' }} onClick={() => handleRentClick(bike)}>
-                  Rent Now
-                </button>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
