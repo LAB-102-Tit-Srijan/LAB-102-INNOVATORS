@@ -19,7 +19,7 @@ function ProductDetails() {
     setProduct(data);
     
     if (data) {
-      const pred = getPricePrediction(data.price, data.originalPrice, data.condition, data.ageInMonths);
+      const pred = getPricePrediction(data.price, data.originalPrice, data.condition, data.ageInMonths, data.category);
       setPrediction(pred);
     }
   }, [id]);
@@ -105,30 +105,51 @@ function ProductDetails() {
           </div>
         </div>
 
-        {/* AI Prediction Badge */}
+        {/* AI Premium Insights */}
         {prediction && !isRent && (
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
             style={{ 
-              backgroundColor: 'rgba(99, 102, 241, 0.1)', 
+              backgroundColor: 'rgba(99, 102, 241, 0.05)', 
               border: '1px solid rgba(99, 102, 241, 0.3)', 
               borderRadius: '12px', 
-              padding: '16px', 
+              padding: '20px', 
               marginBottom: '24px',
-              display: 'flex',
-              gap: '12px',
-              alignItems: 'flex-start'
             }}
           >
-            <Sparkles color="var(--primary)" size={24} style={{ flexShrink: 0, marginTop: '2px' }} />
-            <div>
-              <div style={{ fontWeight: 'bold', color: prediction.color, marginBottom: '4px' }}>
-                {prediction.status}
+            <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 20px 0', fontSize: '1.1rem', color: 'var(--primary)' }}>
+              🤖 AI Premium Insights
+            </h4>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '1.5rem', background: 'rgba(255,255,255,0.1)', padding: '8px', borderRadius: '12px' }}>💰</span>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Suggested Price</div>
+                  <div style={{ fontWeight: 'bold', color: 'var(--text-color)', fontSize: '1.1rem' }}>₹{prediction.recommendedPrice}</div>
+                </div>
               </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                {prediction.suggestion}. Analysis based on product age ({formatProductAge(product.ageInMonths)}) and condition.
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '1.5rem', background: 'rgba(255,255,255,0.1)', padding: '8px', borderRadius: '12px' }}>📊</span>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Demand</div>
+                  <div style={{ fontWeight: 'bold', color: prediction.demandLevel === 'High' ? 'var(--accent)' : 'var(--text-color)', fontSize: '1.1rem' }}>{prediction.demandLevel}</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '1.5rem', background: 'rgba(255,255,255,0.1)', padding: '8px', borderRadius: '12px' }}>⏰</span>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Best Time</div>
+                  <div style={{ fontWeight: 'bold', color: 'var(--text-color)', fontSize: '1.1rem' }}>Evening</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '1.5rem', background: 'rgba(255,255,255,0.1)', padding: '8px', borderRadius: '12px' }}>⚡</span>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Sale Chance</div>
+                  <div style={{ fontWeight: 'bold', color: 'var(--text-color)', fontSize: '1.1rem' }}>Fast</div>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -143,7 +164,7 @@ function ProductDetails() {
         </div>
 
         {/* Seller Info */}
-        <div className="glass-panel" style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
+        <div className="glass-panel" style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
           <img src={product.seller.avatar} alt={product.seller.name} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} />
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold', color: 'white', marginBottom: '4px' }}>
@@ -165,6 +186,30 @@ function ProductDetails() {
             Chat
           </button>
         </div>
+
+        {/* AI Safety Insight */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="glass-panel"
+          style={{
+            padding: '16px',
+            marginBottom: '32px',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+            borderRadius: '12px'
+          }}
+        >
+          <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 12px 0', fontSize: '1.05rem', color: '#10B981' }}>
+            🔐 AI Safety Insight:
+          </h4>
+          <ul style={{ margin: 0, paddingLeft: '24px', color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6' }}>
+            <li style={{ marginBottom: '4px' }}>Seller reliability: {product.seller.trustScore >= 90 ? 'High' : 'Medium'}</li>
+            <li style={{ marginBottom: '4px' }}>Low risk of fraud</li>
+            <li style={{ marginBottom: '4px' }}>{product.seller.verified ? 'Verified profile activity' : 'Standard profile activity'}</li>
+          </ul>
+        </motion.div>
 
         {/* Reviews Section */}
         {product.reviews && (

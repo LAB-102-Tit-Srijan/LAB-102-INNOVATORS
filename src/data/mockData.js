@@ -13,6 +13,7 @@ export const MOCK_LISTINGS = [
     condition: 'Used',
     ageInMonths: 8,
     category: 'Books & Notes',
+    forFirstYear: true,
     location: 'Main Library',
     seller: { id: 'user_1', name: 'Rahul S.', avatar: 'https://i.pravatar.cc/150?img=11', rating: 4.8, verified: true, trustScore: 98 },
     type: 'sell',
@@ -28,8 +29,7 @@ export const MOCK_LISTINGS = [
     price: 15,
     originalPrice: 1200,
     images: [
-      'https://images.unsplash.com/photo-1580522154071-c6ca47011e14?auto=format&fit=crop&q=80&w=600',
-      'https://images.unsplash.com/photo-1587145820266-a5951ee6f620?auto=format&fit=crop&q=80&w=600' // slightly blurry/different angle
+      '/casio_calculator.png'
     ],
     condition: 'Good',
     ageInMonths: 14,
@@ -70,6 +70,7 @@ export const MOCK_LISTINGS = [
     condition: 'Used',
     ageInMonths: 6,
     category: 'Stationery',
+    forFirstYear: true,
     location: 'Hostel Block A',
     seller: { id: 'user_4', name: 'Sneha R.', avatar: 'https://i.pravatar.cc/150?img=9', rating: 5.0, verified: true, trustScore: 100 },
     type: 'sell',
@@ -82,7 +83,7 @@ export const MOCK_LISTINGS = [
     price: 450,
     originalPrice: 900,
     images: [
-      'https://images.unsplash.com/photo-1585421523420-53bc3a2d04a6?auto=format&fit=crop&q=80&w=600'
+      '/electric_kettle.png'
     ],
     condition: 'Good',
     ageInMonths: 20,
@@ -124,6 +125,7 @@ export const MOCK_LISTINGS = [
     condition: 'Used',
     ageInMonths: 10,
     category: 'Stationery',
+    forFirstYear: true,
     location: 'Chemistry Block',
     seller: { id: 'user_7', name: 'Neha S.', avatar: 'https://i.pravatar.cc/150?img=16', rating: 4.9, verified: true, trustScore: 96 },
     type: 'sell',
@@ -238,6 +240,75 @@ export const MOCK_LISTINGS = [
     location: 'Girls Hostel B',
     seller: { id: 'user_13', name: 'Ankita P.', avatar: 'https://i.pravatar.cc/150?img=45', rating: 4.5, verified: true, trustScore: 90 },
     type: 'sell',
+    reviews: []
+  },
+  {
+    id: 14,
+    title: 'Sony WH-1000XM4 Noise Cancelling Headphones',
+    description: 'Perfect for focusing during exams. Renting them out for the weekend.',
+    price: 150,
+    originalPrice: null,
+    images: [
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600'
+    ],
+    condition: 'Good',
+    ageInMonths: 14,
+    category: 'Electronics',
+    location: 'Hostel Block A',
+    seller: { id: 'user_14', name: 'Kabir R.', avatar: 'https://i.pravatar.cc/150?img=50', rating: 4.9, verified: true, trustScore: 98 },
+    type: 'rent',
+    reviews: []
+  },
+  {
+    id: 15,
+    title: 'Apple 20W USB-C Power Adapter',
+    description: 'Spare charger, works perfectly. Renting it out for those who lost theirs and need one urgently.',
+    price: 30,
+    originalPrice: null,
+    images: [
+      'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&q=80&w=600'
+    ],
+    condition: 'Used',
+    ageInMonths: 10,
+    category: 'Electronics',
+    location: 'Main Library',
+    seller: { id: 'user_15', name: 'Simran K.', avatar: 'https://i.pravatar.cc/150?img=51', rating: 4.6, verified: true, trustScore: 91 },
+    type: 'rent',
+    reviews: []
+  },
+  {
+    id: 16,
+    title: 'Formal White T-Shirt / Shirt',
+    description: 'Crisp white shirt required for formal presentations and viva. Renting out for single day use.',
+    price: 50,
+    originalPrice: null,
+    images: [
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=600'
+    ],
+    condition: 'Good',
+    ageInMonths: 5,
+    category: 'Occasional',
+    forFirstYear: true,
+    location: 'Hostel Block C',
+    seller: { id: 'user_16', name: 'Aarav M.', avatar: 'https://i.pravatar.cc/150?img=52', rating: 4.7, verified: true, trustScore: 95 },
+    type: 'rent',
+    reviews: []
+  },
+  {
+    id: 17,
+    title: 'Formal Black Shoes (Size 9)',
+    description: 'Black formal shoes for placements and formal events. Cleaned and polished. Renting per day.',
+    price: 80,
+    originalPrice: null,
+    images: [
+      'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=600'
+    ],
+    condition: 'Used',
+    ageInMonths: 8,
+    category: 'Occasional',
+    location: 'Hostel Block B',
+    seller: { id: 'user_17', name: 'Dev P.', avatar: 'https://i.pravatar.cc/150?img=53', rating: 4.4, verified: true, trustScore: 89 },
+    type: 'rent',
     reviews: []
   }
 ];

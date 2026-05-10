@@ -1,80 +1,214 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Filter, TrendingUp, Search as SearchIcon } from 'lucide-react';
-import ListingCard from '../components/marketplace/ListingCard';
-import { MOCK_LISTINGS } from '../data/mockData';
-
-const CATEGORIES = [
-  { id: 'all', label: 'All Items' },
-  { id: 'Books & Notes', label: '📚 Books & Notes' },
-  { id: 'Electronics', label: '💻 Electronics' },
-  { id: 'Hostel Essentials', label: '🛏️ Hostel Essentials' },
-  { id: 'Stationery', label: '✏️ Stationery' },
-  { id: 'Bikes & Cycles', label: '🚲 Bikes & Cycles' },
-  { id: 'Occasional', label: '🎉 Occasional' },
-  { id: 'Girls Fashion', label: '👗 Girls Fashion' }
-];
+import { useNavigate } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 function Home() {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get('q') || '';
+  const navigate = useNavigate();
 
-  // Filter listings based on both category and search query
-  const filteredListings = MOCK_LISTINGS.filter(item => {
-    const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
-    const matchesSearch = searchQuery === '' || 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesCategory && matchesSearch;
-  });
+  const floatVariants = {
+    animate: (i) => ({
+      y: [0, -15, 0],
+      transition: {
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: i * 0.5,
+      }
+    })
+  };
 
   return (
-    <div className="container" style={{ paddingTop: '20px' }}>
+    <div className="container" style={{ 
+      minHeight: 'calc(100vh - 140px)', 
+      display: 'flex', 
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      paddingTop: '20px',
+      overflow: 'hidden'
+    }}>
       
-      {/* Categories / Quick Filters */}
-      <div className="categories-scroll no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginBottom: '24px', paddingBottom: '8px' }}>
-        {CATEGORIES.map(cat => (
-          <button 
-            key={cat.id}
-            className={`btn ${activeCategory === cat.id ? 'btn-primary' : 'btn-outline'}`} 
-            style={{ padding: '8px 16px', borderRadius: '20px', whiteSpace: 'nowrap' }}
-            onClick={() => setActiveCategory(cat.id)}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
+      {/* Background glow effects */}
+      <div style={{
+        position: 'absolute',
+        top: '20%',
+        left: '20%',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(0,0,0,0) 70%)',
+        borderRadius: '50%',
+        zIndex: 0
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '20%',
+        right: '20%',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(0,0,0,0) 70%)',
+        borderRadius: '50%',
+        zIndex: 0
+      }} />
 
-      <div className="section-header flex-between" style={{ marginBottom: '16px' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.25rem' }}>
-          {searchQuery ? (
-            <><SearchIcon className="text-primary" size={20} color="var(--primary)" /> Results for "{searchQuery}"</>
-          ) : (
-            <><TrendingUp className="text-primary" size={20} color="var(--primary)" /> {activeCategory === 'all' ? 'Trending on Campus' : CATEGORIES.find(c => c.id === activeCategory)?.label || 'Items'}</>
-          )}
-        </h2>
-        <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>
-          <Filter size={14} /> Filter
-        </button>
-      </div>
-
-      {filteredListings.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
-          No items found in this category.
-        </div>
-      ) : (
-        <div className="marketplace-grid" style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', 
-          gap: '20px' 
+      {/* Hero Content */}
+      <div style={{ 
+        maxWidth: '800px', 
+        textAlign: 'center', 
+        zIndex: 10,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '24px'
+      }}>
+        
+        <div className="glass-panel" style={{ 
+          display: 'inline-flex', 
+          alignItems: 'center', 
+          gap: '8px', 
+          padding: '6px 16px', 
+          borderRadius: '20px',
+          color: 'var(--primary)',
+          fontSize: '0.9rem',
+          fontWeight: 500,
+          border: '1px solid rgba(99,102,241,0.3)'
         }}>
-          {filteredListings.map(listing => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
+          <Sparkles size={16} />
+          Powered by Smart AI Recommendations
         </div>
-      )}
+
+        <h1 style={{ 
+          fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', 
+          lineHeight: 1.1,
+          letterSpacing: '-0.03em',
+          margin: 0
+        }}>
+          The Future of Campus <br/>
+          <span style={{ 
+            color: 'var(--primary)',
+            background: 'linear-gradient(to right, #a78bfa, #818cf8)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>Resource Exchange</span>
+        </h1>
+
+        <p style={{ 
+          fontSize: '1.1rem', 
+          color: 'var(--text-muted)',
+          maxWidth: '600px',
+          margin: '0 auto',
+          lineHeight: 1.6
+        }}>
+          A next-generation marketplace exclusively for your college. Buy, sell, and discover engineering tools with AI-curated suggestions tailored to your branch and year.
+        </p>
+
+        <div style={{ display: 'flex', gap: '16px', marginTop: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button 
+            className="btn btn-primary" 
+            style={{ padding: '14px 28px', fontSize: '1.1rem', borderRadius: '30px' }}
+            onClick={() => navigate('/market')}
+          >
+            Explore Marketplace &rarr;
+          </button>
+          <button 
+            className="btn glass-panel" 
+            style={{ padding: '14px 28px', fontSize: '1.1rem', borderRadius: '30px', color: 'white' }}
+            onClick={() => navigate('/add')}
+          >
+            Start Selling
+          </button>
+        </div>
+      </div>
+
+      {/* Floating Images */}
+      {/* 1. Drafting Board */}
+      <motion.div 
+        custom={0}
+        variants={floatVariants}
+        animate="animate"
+        className="glass-panel hidden-mobile"
+        style={{
+          position: 'absolute',
+          top: '15%',
+          left: '5%',
+          width: '200px',
+          height: '200px',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: '8px',
+          zIndex: 5,
+          transform: 'rotate(-5deg)'
+        }}
+      >
+        <img src="https://images.unsplash.com/photo-1503694978374-8a2fa686963a?auto=format&fit=crop&q=80&w=400" alt="Drafting" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
+      </motion.div>
+
+      {/* 2. Scientific Calculator */}
+      <motion.div 
+        custom={1}
+        variants={floatVariants}
+        animate="animate"
+        className="glass-panel hidden-mobile"
+        style={{
+          position: 'absolute',
+          top: '10%',
+          right: '2%',
+          width: '220px',
+          height: '240px',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: '8px',
+          zIndex: 5,
+          transform: 'rotate(5deg)'
+        }}
+      >
+        <img src="/casio_calculator.png" alt="Calculator" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
+      </motion.div>
+
+      {/* 3. Electronics/Arduino */}
+      <motion.div 
+        custom={2}
+        variants={floatVariants}
+        animate="animate"
+        className="glass-panel hidden-mobile"
+        style={{
+          position: 'absolute',
+          bottom: '15%',
+          left: '2%',
+          width: '240px',
+          height: '180px',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: '8px',
+          zIndex: 5,
+          transform: 'rotate(3deg)'
+        }}
+      >
+        <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&q=80&w=400" alt="Electronics" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
+      </motion.div>
+
+      {/* 4. Books */}
+      <motion.div 
+        custom={3}
+        variants={floatVariants}
+        animate="animate"
+        className="glass-panel hidden-mobile"
+        style={{
+          position: 'absolute',
+          bottom: '5%',
+          right: '8%',
+          width: '200px',
+          height: '260px',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: '8px',
+          zIndex: 5,
+          transform: 'rotate(-3deg)'
+        }}
+      >
+        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400" alt="Books" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
+      </motion.div>
+
     </div>
   );
 }

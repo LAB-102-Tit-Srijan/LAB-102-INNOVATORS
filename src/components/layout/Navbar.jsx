@@ -13,9 +13,9 @@ function Navbar() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/market?q=${encodeURIComponent(searchQuery)}`);
     } else {
-      navigate('/');
+      navigate('/market');
     }
   };
 
